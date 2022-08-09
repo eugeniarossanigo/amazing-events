@@ -101,34 +101,3 @@ let filterCategories = (arrayEvents, arrayCategories) => {
 let filterNames = (arrayEvents, userInput) => {
     return arrayEvents.filter(event => event.name.toLowerCase().indexOf(userInput) != -1 ? true : false)
 }
-
-
-
-
-
-
-
-
-// let boxContainer = document.getElementById('box-container-index')
-// let events;
-
-// fetch('http://amazing-events.herokuapp.com/api/events')
-//     .then((res) => res.json())
-//     .then((data) => {
-//         if (document.getElementById('box-container-index')) {
-//             boxContainer = document.getElementById('box-container-index')
-//             events = data.events
-//         } else if (document.getElementById('box-container-past')) {
-//             boxContainer = document.getElementById('box-container-past')
-//             events = data.events.filter(element => element.date < data.currentDate)
-//         } else {
-//             boxContainer = document.getElementById('box-container-upcoming')
-//             events = data.events.filter(element => element.date > data.currentDate)
-//         }
-//         showCards(data.events)
-//         console.log(events)
-//         console.log(events.currentDate)
-//     })
-//     .catch((error) => console.log(error))
-
-// console.log(events)

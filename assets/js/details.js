@@ -29,7 +29,7 @@ let createCard = (event) => {
                                 <li class="fs-6"><span class="fw-semibold">Category:</span> ${event.category}</li>
                                 <li class="fs-6"><span class="fw-semibold">Place:</span> ${event.place}</li>
                                 <li class="fs-6"><span class="fw-semibold">Capacity:</span> ${event.capacity}</li>
-                                <li class="fs-6"><span class="fw-semibold">Assistance or estimate:</span> ${event.assistance? event.assistance : "Missing info."}</li>
+                                <li class="fs-6"><span class="fw-semibold">Assistance or estimate:</span> ${event.assistance? event.assistance : event.estimate}</li>
                                 <li class="fs-6"><span class="fw-semibold">Price:</span> $${event.price}</li>
                             </ul>
                         </div>`

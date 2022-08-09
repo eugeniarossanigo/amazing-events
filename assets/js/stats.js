@@ -20,7 +20,7 @@ const getData = async() => {
         let maxCap = maxCapacity(statsarray)
         showTableAttendance(maxAtt, minAtt, maxCap, firstTableContainer)
 
-         ////////// TABLA 2 y 3
+         /////// TABLA 2 y 3
         let categories = [...(new Set(events.map(elem => elem.category)))]
         let upcomStatistics = statsCalcule(upcomingEvents, categories)
         let upcomTableContainer = document.getElementById('second-tbody')
@@ -73,41 +73,7 @@ let maxCapacity = (array) => {
 }
 
 
-// let statisticsArray = (array) => {
-//     let arrayCapacity = array.sort((a, b) => b.capacity - a.capacity)[0]
-//     let maxAttendance = array.filter(element => element.assistance)
-//                         .sort((a, b) => {
-//                         let percent = Number(b.assistance) / Number(b.capacity) - Number(a.assistance) / Number(a.capacity)
-//                         let newElement = {
-//                             name: b.name,
-//                             percent: percent,
-//                             capacity: b.capacity,
-//                         }
-//                         return newElement
-//                     })
-//     console.log(maxAttendance)
-//     return maxAttendance
-// }
-
-// let sort = (array) => {
-//     return array.sort((a, b) => a - b)
-// }
-
-// let maxAttendance = (array) => {
-//     return array.filter(element => element.assistance).sort((a, b) => b.percent - a.percent).slice(0,1)
-// }
-
-// let minAttendance = (array) => {
-//     return array.filter(element => element.assistance).sort((a, b) => a.percent - b.percent).slice(0,1)
-// }
-
-// let maxCapacity = (array) => {
-//     return array.sort((a, b) => b.capacity - a.capacity).slice(0,1)
-// }
-
-
-
-// ///////////////// TABLA 2 y 3
+/////////////////// TABLA 2 y 3
 let showTableCategories = (array, tbodyContainer) => {
     tbodyContainer.innerHTML = ""
     array.forEach(element => {
@@ -123,7 +89,6 @@ let showTableCategories = (array, tbodyContainer) => {
 
 let statsCalcule = (array, categories) => {
     let allCategoriesStats = []
-    // for(leti = 0; i<categories.length; i++)
     for (let category of categories) {
         let cant = 0
         let sum = 0
@@ -145,53 +110,3 @@ let statsCalcule = (array, categories) => {
     }
     return allCategoriesStats
 }
-
-
-// 98,75
-// 93,75
-// 100
-// 100
-// 83
-// 100
-
-
-
-
-
-// let statisticsArray = (array) => {
-//     let newArray = array.map(element => {
-//                     let newElement = {
-//                         category: element.category,
-//                         percent: percent,
-//                         att: element.assistance ? element.assistance : element.estimate,
-//                         price: element.price
-//                     }
-//                     return newElement
-//                 })
-//     return newArray
-// }
-
-
-
-// function listCategories(eventsData) {
-//     eventsData.forEach((eventsData) => {
-//         if (!categories.includes(eventsData.category)){
-//         categories.push(eventsData.category)}
-//     })
-// }
-
-
-
-// let upcomingRevenues = (array) => {
-//     array.map(element => {
-//         let renueves = 0;
-//         let rev = (element.revNumber * element.price).push(renueves)
-//         let attendance =
-//         let newArray = {
-//             category: element.category,
-//             renueve: rev,
-
-//         }
-//     })
-// }
-
