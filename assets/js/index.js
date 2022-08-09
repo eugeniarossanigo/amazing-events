@@ -1,16 +1,57 @@
 let boxContainer;
-let events = []
+let events;
+let selectCheckboxes = []
 
-if (document.getElementById('box-container-index')) {
-    boxContainer = document.getElementById('box-container-index')
-    events = data.events
-} else if (document.getElementById('box-container-past')) {
-    boxContainer = document.getElementById('box-container-past')
-    events = data.events.filter(element => element.date < data.currentDate)
-} else {
-    boxContainer = document.getElementById('box-container-upcoming')
-    events = data.events.filter(element => element.date > data.currentDate)
+const getData = async() => {
+    try {
+        const res = await fetch('http://amazing-events.herokuapp.com/api/events')
+        let data = await res.json()
+        if (document.getElementById('box-container-index')) {
+            boxContainer = document.getElementById('box-container-index')
+            events = data.events
+        } else if (document.getElementById('box-container-past')) {
+            boxContainer = document.getElementById('box-container-past')
+            events = data.events.filter(element => new Date (element.date) < new Date (data.currentDate))
+        } else {
+            boxContainer = document.getElementById('box-container-upcoming')
+            events = data.events.filter(element => new Date (element.date) > new Date (data.currentDate))
+        }
+        showCards(events)
+        createCategories()
+        
+        let checkboxes = document.querySelectorAll('input[type="checkbox"]')
+        let inputForm = document.getElementById('input-form')
+        let resetBtn = document.getElementById("btn-reset")
+
+        inputForm.addEventListener("keyup", (e)=> {
+            e.preventDefault()
+            filterNamesAndCategories()
+        })
+        
+        checkboxes.forEach(checkbox => checkbox.addEventListener("change", ()=>{
+            selectCheckboxes = Array.from(checkboxes).filter(check => check.checked).map(element => element.value)
+            filterNamesAndCategories()
+        }))
+        
+        resetBtn.addEventListener("click", () => {
+            inputForm.value = ""
+            selectCheckboxes = []
+            filterNamesAndCategories()
+        })
+
+        let filterNamesAndCategories = () => {
+            let cardsNamesFiltered = filterNames(events, inputForm.value.toLowerCase())
+            let cardsCategoriesFiltered = filterCategories(cardsNamesFiltered, selectCheckboxes)
+            showCards(cardsCategoriesFiltered)
+        }
+        filterNamesAndCategories()
+        
+    } catch(err) {
+        console.log(err)
+        alert('Error')
+    }
 }
+getData()
 
 ///// CREATE CARDS AND APPEND TO MAIN CONTAINER
 let showCards = (array) => {
@@ -36,7 +77,6 @@ let showCards = (array) => {
         boxContainer.innerHTML = `<h6>No results. Adjust your search parameters.</h6>`
     }
 }
-showCards(events)
 
 ///// CREATE CATEGORIES CHECKBOX
 let createCategories = () => {
@@ -46,34 +86,12 @@ let createCategories = () => {
     checkCategories.forEach(category => {
         let div = document.createElement('div')
         div.className = 'form-check'
-        div.innerHTML = `<input class="form-check-input" type="checkbox" value="${category}" id="flexCheckDefault">
-                        <label class="form-check-label" for="flexCheckDefault">${category}</label>`
+        div.innerHTML = `<label class="form-check-label" for="${category}-check">
+                        <input class="form-check-input" type="checkbox" value="${category}" id="${category}-check">
+                        ${category}</label>`
         checkContainer.append(div)
     })
 }
-createCategories()
-
-///// CHECKBOX AND FORM FILTERS
-let selectCheckboxes = []
-let checkboxes = document.querySelectorAll('input[type="checkbox"]')
-let inputForm = document.getElementById('input-form')
-let resetBtn = document.getElementById("btn-reset")
-
-inputForm.addEventListener("keyup", (e)=> {
-    e.preventDefault()
-    filterNamesAndCategories()
-})
-
-checkboxes.forEach(checkbox => checkbox.addEventListener("change", ()=>{
-    selectCheckboxes = Array.from(checkboxes).filter(check => check.checked).map(element => element.value)
-    filterNamesAndCategories()
-}))
-
-resetBtn.addEventListener("click", () => {
-    inputForm.value = ""
-    selectCheckboxes = []
-    filterNamesAndCategories()
-})
 
 ///// AUXILIAR FUNCTIONS FOR FILTERS
 let filterCategories = (arrayEvents, arrayCategories) => {
@@ -84,10 +102,33 @@ let filterNames = (arrayEvents, userInput) => {
     return arrayEvents.filter(event => event.name.toLowerCase().indexOf(userInput) != -1 ? true : false)
 }
 
-///// SHOW CARDS BY FILTERS
-let filterNamesAndCategories = () => {
-    let cardsNamesFiltered = filterNames(events, inputForm.value.toLowerCase())
-    let cardsCategoriesFiltered = filterCategories(cardsNamesFiltered, selectCheckboxes)
-    showCards(cardsCategoriesFiltered)
-}
-filterNamesAndCategories()
+
+
+
+
+
+
+
+// let boxContainer = document.getElementById('box-container-index')
+// let events;
+
+// fetch('http://amazing-events.herokuapp.com/api/events')
+//     .then((res) => res.json())
+//     .then((data) => {
+//         if (document.getElementById('box-container-index')) {
+//             boxContainer = document.getElementById('box-container-index')
+//             events = data.events
+//         } else if (document.getElementById('box-container-past')) {
+//             boxContainer = document.getElementById('box-container-past')
+//             events = data.events.filter(element => element.date < data.currentDate)
+//         } else {
+//             boxContainer = document.getElementById('box-container-upcoming')
+//             events = data.events.filter(element => element.date > data.currentDate)
+//         }
+//         showCards(data.events)
+//         console.log(events)
+//         console.log(events.currentDate)
+//     })
+//     .catch((error) => console.log(error))
+
+// console.log(events)
