@@ -1,89 +1,47 @@
 let boxContainer;
-let events;
-let selectCheckboxes = []
+let events = data.events
 
-const getData = async() => {
-    try {
-        const res = await fetch('http://amazing-events.herokuapp.com/api/events')
-        let data = await res.json()
-        if (document.getElementById('box-container-index')) {
-            boxContainer = document.getElementById('box-container-index')
-            events = data.events
-        } else if (document.getElementById('box-container-past')) {
-            boxContainer = document.getElementById('box-container-past')
-            events = data.events.filter(element => new Date (element.date) < new Date (data.currentDate))
-        } else {
-            boxContainer = document.getElementById('box-container-upcoming')
-            events = data.events.filter(element => new Date (element.date) > new Date (data.currentDate))
-        }
-        showCards(events)
-        createCategories()
-        
-        let checkboxes = document.querySelectorAll('input[type="checkbox"]')
-        let inputForm = document.getElementById('input-form')
-        let resetBtn = document.getElementById("btn-reset")
-
-        inputForm.addEventListener("keyup", (e)=> {
-            e.preventDefault()
-            filterNamesAndCategories()
-        })
-        
-        checkboxes.forEach(checkbox => checkbox.addEventListener("change", ()=>{
-            selectCheckboxes = Array.from(checkboxes).filter(check => check.checked).map(element => element.value)
-            filterNamesAndCategories()
-        }))
-        
-        resetBtn.addEventListener("click", () => {
-            inputForm.value = ""
-            selectCheckboxes = []
-            filterNamesAndCategories()
-        })
-
-        let filterNamesAndCategories = () => {
-            let cardsNamesFiltered = filterNames(events, inputForm.value.toLowerCase())
-            let cardsCategoriesFiltered = filterCategories(cardsNamesFiltered, selectCheckboxes)
-            showCards(cardsCategoriesFiltered)
-        }
-        filterNamesAndCategories()
-        
-    } catch(err) {
-        console.log(err)
-        alert('Error')
-    }
+if (document.getElementById('box-container-index')) {
+    boxContainer = document.getElementById('box-container-index')
+    events = data.events
+} else if (document.getElementById('box-container-past')) {
+    boxContainer = document.getElementById('box-container-past')
+    events = data.events.filter(element => element.date < data.currentDate)
+} else {
+    boxContainer = document.getElementById('box-container-upcoming')
+    events = data.events.filter(element => element.date > data.currentDate)
 }
-getData()
 
-///// CREATE CARDS AND APPEND TO MAIN CONTAINER
-let showCards = (array) => {
-    boxContainer.innerHTML = ""
+let showCards = (array, container) => {
+    container.innerHTML = ""
     if (array.length > 0) {
-        array.forEach(element => {
-            let box = document.createElement('div');
-            box.className = 'box';
-            box.id = `${element._id}`
+        array.forEach(elem => {
+            let box = document.createElement('div')
+            box.className = 'box'
+            box.id = `${elem.id}`
             box.style.flex = 'flex-column';
-            box.innerHTML = `<img src=${element.image} alt="event">
-                            <div class="box-text d-flex flex-column justify-content-between gap-4 p-2">
-                                <h5 class="text-uppercase fw-semibold">${element.name}</h5>
-                                <p class="fs-6">${element.description}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <p>Price: <span class="fs-6 fw-bold">$${element.price}</span></p>
-                                    <a lang="en" href="details.html?id=${element._id}" class="text-decoration-none px-3 py-1">Read more ▹</a>
-                                </div>
-                            </div>`
-            boxContainer.appendChild(box);
+            box.innerHTML = `
+                    <img src=${elem.image} alt="event">
+                    <div class="box-text d-flex flex-column justify-content-between gap-4 p-2">
+                        <h5 class="text-uppercase fw-semibold">${elem.name}</h5>
+                        <p class="fs-6">${elem.description}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p>Price: <span class="fs-6 fw-bold">$${elem.price}</span></p>
+                            <a lang="en" href="details.html?id=${elem._id}" class="text-decoration-none px-3 py-1">Read more ▹</a>
+                        </div>
+                    </div>`
+            container.appendChild(box)
         })
     } else {
-        boxContainer.innerHTML = `<h6>No results. Adjust your search parameters.</h6>`
+        container.innerHTML = `<h6>No results. Adjust your search parameters.</h6>`
     }
 }
+showCards(events, boxContainer)
 
-///// CREATE CATEGORIES CHECKBOX
-let createCategories = () => {
+let createCategories = (array) => {
     let checkContainer = document.getElementById('check-container')
-    let checkCategories = [...(new Set(events.map(check => check.category)))]
-
-    checkCategories.forEach(category => {
+    let categories = [...(new Set(events.map(elem => elem.category)))]
+    categories.forEach(category => {
         let div = document.createElement('div')
         div.className = 'form-check'
         div.innerHTML = `<label class="form-check-label" for="${category}-check">
@@ -92,12 +50,34 @@ let createCategories = () => {
         checkContainer.append(div)
     })
 }
+createCategories(events)
 
-///// AUXILIAR FUNCTIONS FOR FILTERS
-let filterCategories = (arrayEvents, arrayCategories) => {
-    return arrayCategories.length > 0 ? arrayEvents.filter(event => arrayCategories.includes(event.category)) : arrayEvents
+let checkboxes = document.querySelectorAll('input[type="checkbox"]')
+let inputForm = document.getElementById('input-form')
+let resetBtn = document.getElementById("btn-reset")
+let selectCheckboxes = []
+
+checkboxes.forEach(check => check.addEventListener("change", () => {
+    selectCheckboxes = Array.from(checkboxes).filter(check => check.checked).map(elem => elem.value)
+    filterNamesAndCategories()
+}))
+
+inputForm.addEventListener("keyup", (e) => {
+    e.preventDefault()
+    filterNamesAndCategories()
+})
+
+let filterNamesAndCategories = () => {
+    let cardsNamesFiltered = filterInput(events, inputForm.value)
+    let cardsCategoriesFiltered = filterArray(cardsNamesFiltered, selectCheckboxes)
+    showCards(cardsCategoriesFiltered, boxContainer)
 }
 
-let filterNames = (arrayEvents, userInput) => {
-    return arrayEvents.filter(event => event.name.toLowerCase().indexOf(userInput) != -1 ? true : false)
+let filterArray = (array1, array2) => {
+    return array2.length > 0 ? array1.filter(elem => array2.includes(elem.category)) : array1
 }
+
+let filterInput = (array, userInput) => {
+    return array.filter(elem => elem.name.toLowerCase().includes(userInput.toLowerCase().trim()))
+}
+
