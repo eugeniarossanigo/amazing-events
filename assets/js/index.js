@@ -1,6 +1,23 @@
-let boxContainer;
-let events = data.events
+// let boxContainer;
+// let events;
+// fetch("./data.json")
+//     .then(res => res.json())
+//     .then(data => {
+//         if (document.getElementById('box-container-index')) {
+//             boxContainer = document.getElementById('box-container-index')
+//             events = data
+//         } else if (document.getElementById('box-container-past')) {
+//             boxContainer = document.getElementById('box-container-past')
+//             events = data.filter(element => element.date < data.currentDate)
+//         } else {
+//             boxContainer = document.getElementById('box-container-upcoming')
+//             events = data.filter(element => element.date > data.currentDate)
+//         }
+        
+//     })
 
+
+let events = data.events
 if (document.getElementById('box-container-index')) {
     boxContainer = document.getElementById('box-container-index')
     events = data.events
